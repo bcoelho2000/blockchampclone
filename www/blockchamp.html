@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>My Block Champ Clone</title>
+    <style media="screen">
+      .gameContainer
+      {
+        width: 100%;
+        align-items: center;
+        align-content: center;
+      }
+
+      .grid-container {
+        display: inline-grid;
+        grid-template-columns: 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px;
+        grid-gap: 1px;
+        background-color: #8fffdb;
+        color: #444;
+        border: solid 5px black;
+        border-radius: 33px;
+        padding: 25px;
+      }
+
+      .nextpieces-container {
+        display: inline-grid;
+        grid-template-columns: 50px 50px 50px 50px 50px;
+        grid-gap: 1px;
+        background-color: #fff;
+        color: #444;
+        border: solid 5px black;
+        border-radius: 25px;
+        padding: 21px;
+      }
+
+      .grid-cell {
+        background-color: #444;
+        color: #fff;
+        border-radius: 5px;
+        padding: 25px;
+        font-size: 150%;
+      }
+
+      .grid-cell-full {
+        padding: 0px;
+      }
+
+      .grid-cell-full .block {
+        background-color: #444;
+        color: #fff;
+        border-radius: 5px;
+        padding: 25px;
+        font-size: 150%;
+      }
+
+    </style>
+    <script type="text/javascript">
+      let game = null;
+
+      function init()
+      {
+        game = new Game();
+      }
+
+      function testAddNewBlocks()
+      {
+        game.board.addNewBlockAndRender(new Block("#000000", 1), 0, 0);
+        game.board.addNewBlockAndRender(new Block("#000011", 1), 0, 1);
+        game.board.addNewBlockAndRender(new Block("#000022", 1), 0, 2);
+      }
+
+      function Game()
+      {
+        this.board = new Board("boardID", "grid-container", 10, 10);
+        this.board.createGrid();
+        this.board.render();
+
+        this.nextPieces = new Board("nextPiecesID", "nextpieces-container", 5, 5)
+        this.nextPieces.createGrid();
+        this.nextPieces.render();
+      }
+
+      function Board(viewID, className, width, height)
+      {
+        console.log("Board ctor start");
+        this.view = document.getElementById(viewID);
+        this.view.className = className; //https://www.w3schools.com/css/css_grid.asp
+        this.width = width;
+        this.height = height;
+        this.grid = null;
+
+        this.createGrid = function()
+        {
+          console.log("Board.createGrid start");
+          this.grid = new Array(width);
+          for(let w=0; w < this.width; ++w)
+          {
+            this.grid[w] = [];
+            for(let h=0; h<this.height; ++h)
+            {
+              /*
+              I could create the GridCell and render it right here to prevent
+              going through the entire Board (again) and invoke the Render
+              for each GridCell.
+              However, by doing that we also make it impossible to create a grid WIHTOUT
+              rendering it... what if we want to do something BEFORE the render but AFTER
+              creating the grid? That would be impossible...
+              */
+              this.grid[w][h] = new GridCell(this, w, h);
+            }
+          }
+          console.log("Board.createGrid end");
+        };
+
+        this.render = function()
+        {
+          console.log("Board.render start");
+          if(this.grid==null)
+            return;
+
+            for(let w=0; w < this.width; ++w)
+            {
+              for(let h=0; h<this.height; ++h)
+              {
+                this.grid[w][h].render();
+              }
+            }
+          console.log("Board.render end");
+        };
+
+        this.addNewBlockAndRender = function(block, x, y)
+        {
+          /*
+          Adds a new block to the Board and renders it. Returns true.
+          If there was an existing block, it doesn't replace it. Returns false.
+          */
+
+          console.log("Board.addNewBlock: "+block+" "+x+" "+y);
+
+          if(block!=null && this.grid!=null && this.grid[x][y]!=null)
+          {
+            console.log("assessing GridCell and call setBlock...");
+            if(this.grid[x][y].setBlock(block))
+            {
+              this.grid[x][y].render();
+              return true;
+            }
+          }
+          return false;
+
+          console.log("Board.addNewBlock finish");
+        };
+
+        console.log("Board ctor end");
+      }
+
+      function GridCell(boardRef, x, y)
+      {
+        console.log("GridCell ctor: "+boardRef+" "+x+" "+y);
+        this.board = boardRef;
+        this.x = x;
+        this.y = y;
+        this.view = null;
+        this.block = null;
+
+        this.setBlock = function(block)
+        {
+            if(this.block == null)
+            {
+              this.block = block;
+              this.block.setGridCell(this);
+              return true;
+            }
+
+            console.log("GridCell.setBlock - block already exists here")
+            return false;
+
+        };
+
+        this.render = function()
+        {
+          console.log("GridCell.render start");
+          if(this.view == null)
+          {
+            this.view = document.createElement("div");
+            this.view.className = "grid-cell";
+            this.view.id = "grid-cell-id-"+x+y;
+            console.log("GridCell.render adding new "+this.view.id);
+            this.board.view.appendChild(this.view);
+          }
+          else if(this.block != null)
+          {
+            console.log("GridCell.render invoke block.render()");
+            this.block.render();
+          }
+          console.log("GridCell.render end");
+        };
+      }
+
+      function Block(color, points)
+      {
+        this.gridCell = null;
+        this.color = color;
+        this.points = points;
+        this.view = null;
+
+        this.setGridCell = function(gridCellRef)
+        {
+            this.gridCell = gridCellRef;
+        }
+
+        this.render = function()
+        {
+          if(this.gridCell==null)
+          {
+            console.log("Block.render() - gridCell is null")
+            return;
+          }
+
+          if(this.view == null)
+          {
+            this.view = document.createElement("div");
+            this.view.className = "block";
+            this.view.style.backgroundColor = color;
+            this.view.id = "block-id"+this.gridCell.x+this.gridCell.y;
+
+            /*
+            improvement: it would be best if the Block wouldn't have to worry about
+            adapting/changing anything at the GridCell.view level...
+
+            This might be solved if the render returns the htmlElement and let the caller figure this out.
+            */
+            this.gridCell.view.className = "grid-cell grid-cell-full";
+            this.gridCell.view.appendChild(this.view);
+          }
+          else {
+            this.view.style.color = color; // update color
+          }
+        }
+      }
+
+    </script>
+  </head>
+  <body onload="init()">
+    <h1>Welcome to my Block Champ Clone</h1>
+    <div class="gameContainer">
+      <div id="boardID">
+      </div>
+      <div id="nextPiecesID">
+      </div>
+    </div>
+    <div id="controls">
+      <input type="button" name="testAddNewBlocks" value="testAddNewBlocks" onclick="testAddNewBlocks();" />
+    </div>
+  </body>
+</html>
