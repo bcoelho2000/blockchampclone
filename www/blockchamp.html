@@ -69,8 +69,70 @@
         game.board.addNewBlockAndRender(new Block("#000022", 1), 0, 2);
       }
 
+      const getRandomNumber = (min, max) =>
+      {
+        return Math.floor(Math.random() * (max - min) + min);
+      };
+
       function Game()
       {
+        this.pieceColors = ["#93CB4C", "#F170A0", "#2290FF", "#FCBE5B", "#A35ECD"];
+        this.piecesMatrix = new Array();
+        this.generatePieces = function()
+        {
+          // This is just a temporary thing because this function will eventually
+          // generete random pieces with random score points
+
+          this.piecesMatrix.push([  [2, 2, 2],
+                                    [0, 0, 2],
+                                    [0, 0, 2]
+                                  ]);
+
+          this.piecesMatrix.push([  [5, 5, 5],
+                                    [5, 5, 5],
+                                    [5, 5, 5]
+                                  ]);
+
+          this.piecesMatrix.push([  [3, 0, 0],
+                                    [3, 0, 0],
+                                    [3, 3, 3]
+                                  ]);
+
+          this.piecesMatrix.push([  [2, 2],
+                                    [2, 0]
+                                  ]);
+        };
+        this.generatePieces();
+
+        /*
+        Add a random piece to the 'board' starting on position 'x' and 'y'
+        */
+        this.addRandomPiece = function(board, x, y)
+        {
+          let pieceColor = this.pieceColors[getRandomNumber(0,this.pieceColors.length)];
+          let pieceMatrix = this.piecesMatrix[getRandomNumber(0,this.piecesMatrix.length)];
+
+          for(let boardX = 0; boardX < board.grid.length;++boardX)
+          {
+            for(let boardY = 0; boardY < board.grid[boardX].length; ++boardY)
+            {
+              let block = null;
+              if(
+                boardX < pieceMatrix.length &&
+                boardY < pieceMatrix[boardX].length &&
+                pieceMatrix[boardX][boardY]!=0)
+              {
+                block = new Block(pieceColor, pieceMatrix[boardX][boardY]);
+              }
+              /*
+              The idea here is to add a new Block EVEN IF it's null because
+              we want to
+              */
+              board.addNewBlockAndRender(block, boardX, boardY, true);
+            }
+          }
+        };
+
         this.board = new Board("boardID", "grid-container", 10, 10);
         this.board.createGrid();
         this.board.render();
@@ -78,6 +140,8 @@
         this.nextPieces = new Board("nextPiecesID", "nextpieces-container", 5, 5)
         this.nextPieces.createGrid();
         this.nextPieces.render();
+        this.addRandomPiece(this.nextPieces);
+
       }
 
       function Board(viewID, className, width, height)
@@ -92,6 +156,12 @@
         this.createGrid = function()
         {
           console.log("Board.createGrid start");
+          if(this.view!=null && this.view.hasChildNodes())
+          {
+              for(let childIdx = 0; childIdx < this.view.childNodes.length; ++childIdx)
+                this.view.removeChild(this.view.childNodes[childIdx]);
+          }
+
           this.grid = new Array(width);
           for(let w=0; w < this.width; ++w)
           {
@@ -128,31 +198,45 @@
           console.log("Board.render end");
         };
 
-        this.addNewBlockAndRender = function(block, x, y)
+        this.addNewBlockAndRender = function(block, x, y, override=false)
         {
           /*
           Adds a new block to the Board and renders it. Returns true.
           If there was an existing block, it doesn't replace it. Returns false.
           */
 
-          console.log("Board.addNewBlock: "+block+" "+x+" "+y);
+          console.log("Board.addNewBlock: "+block+" "+x+" "+y+" override:"+override);
 
-          if(block!=null && this.grid!=null && this.grid[x][y]!=null)
+          if(!(this.grid!=null && this.grid[x][y]!=null))
           {
-            console.log("assessing GridCell and call setBlock...");
-            if(this.grid[x][y].setBlock(block))
-            {
-              this.grid[x][y].render();
-              return true;
-            }
+            console.log("Grid was not initialized.")
+            // TO THINK: should we call this.createGrid() automatically?
+            //  usually I don't like "magic" but this could be a fail safe approach.
+            return false;
           }
-          return false;
 
-          console.log("Board.addNewBlock finish");
+          if(block!=null || override)
+          {
+            this.grid[x][y].setBlock(block)
+            this.grid[x][y].render();
+            console.log("Board.addNewBlock true");
+            return true;
+          }
+          console.log("Board.addNewBlock false");
+          return false;
         };
+
+        /*this.setBlock = function (block, x, y)
+        {
+          if(block != null && this.grid != null)
+          {
+              this.grid[x][y].setBlock(block);
+          }
+        }*/
 
         console.log("Board ctor end");
       }
+
 
       function GridCell(boardRef, x, y)
       {
@@ -163,35 +247,56 @@
         this.view = null;
         this.block = null;
 
-        this.setBlock = function(block)
+        this.createView = function()
         {
-            if(this.block == null)
-            {
-              this.block = block;
-              this.block.setGridCell(this);
-              return true;
-            }
-
-            console.log("GridCell.setBlock - block already exists here")
-            return false;
+          this.view = document.createElement("div");
+          this.view.className = "grid-cell";
+          this.view.id = "grid-cell-id-"+x+y;
+          console.log("GridCell.render adding new "+this.view.id);
+          this.board.view.appendChild(this.view);
 
         };
+        this.createView();
+
+        this.setBlock = function(block)
+        {
+          /*
+          if the caller wants to setBlock then this function wont check
+            if the block exists before it sets.
+
+            This way this approach can be used to overlap/override existing blocks
+            and even to erase an existing block by calling this with block = null
+          */
+          this.block = block;
+          if(this.block!=null)
+          {
+            this.block.setGridCell(this);
+          }
+        };
+
+        this.hasBlock = function()
+        {
+          return this.block!=null;
+        }
 
         this.render = function()
         {
           console.log("GridCell.render start");
-          if(this.view == null)
-          {
-            this.view = document.createElement("div");
-            this.view.className = "grid-cell";
-            this.view.id = "grid-cell-id-"+x+y;
-            console.log("GridCell.render adding new "+this.view.id);
-            this.board.view.appendChild(this.view);
-          }
-          else if(this.block != null)
+          if(this.block != null)
           {
             console.log("GridCell.render invoke block.render()");
             this.block.render();
+          }
+          else
+          {
+            // Render an "empty block"
+            this.view.className = "grid-cell";
+            this.view.id = "grid-cell-id-"+x+y;
+            if(this.view.hasChildNodes())
+            {
+              for(let childIdx = 0; childIdx < this.view.childNodes.length; ++childIdx)
+                this.view.removeChild(this.view.childNodes[childIdx]);
+            }
           }
           console.log("GridCell.render end");
         };
@@ -199,6 +304,7 @@
 
       function Block(color, points)
       {
+        console.log("Block.ctor() start");
         this.gridCell = null;
         this.color = color;
         this.points = points;
@@ -206,10 +312,14 @@
 
         this.setGridCell = function(gridCellRef)
         {
-            this.gridCell = gridCellRef;
-        }
+          // sets the GridCell and returns info on if there was an existing value or not.
 
-        this.render = function()
+            let overrideCell = this.gridCell!=null;
+            this.gridCell = gridCellRef;
+            return overrideCell;
+        };
+
+        this.render = function(htmlContainer=null)
         {
           if(this.gridCell==null)
           {
@@ -217,26 +327,33 @@
             return;
           }
 
-          if(this.view == null)
+          if(htmlContainer==null)
           {
-            this.view = document.createElement("div");
-            this.view.className = "block";
-            this.view.style.backgroundColor = color;
-            this.view.id = "block-id"+this.gridCell.x+this.gridCell.y;
-
             /*
             improvement: it would be best if the Block wouldn't have to worry about
             adapting/changing anything at the GridCell.view level...
 
             This might be solved if the render returns the htmlElement and let the caller figure this out.
             */
-            this.gridCell.view.className = "grid-cell grid-cell-full";
-            this.gridCell.view.appendChild(this.view);
+            console.log("Block.render() - setting htmlContainer to gridCell.view")
+            htmlContainer = this.gridCell.view;
           }
-          else {
-            this.view.style.color = color; // update color
+
+          this.view = document.createElement("div");
+          this.view.className = "block";
+          this.view.style.backgroundColor = color;
+          this.view.id = "block-id"+this.gridCell.x+this.gridCell.y;
+
+          htmlContainer.className = "grid-cell grid-cell-full";
+          if(htmlContainer.hasChildNodes())
+          {
+            for(let childIdx = 0; childIdx < htmlContainer.childNodes.length; ++childIdx)
+              htmlContainer.removeChild(htmlContainer.childNodes[childIdx]);
           }
-        }
+          htmlContainer.appendChild(this.view);
+        };
+
+        console.log("Block.ctor() finish");
       }
 
     </script>
@@ -250,7 +367,7 @@
       </div>
     </div>
     <div id="controls">
-      <input type="button" name="testAddNewBlocks" value="testAddNewBlocks" onclick="testAddNewBlocks();" />
+      <input type="button" name="Get Random Piece" value="testAddNewBlocks" onclick="game.addRandomPiece(game.nextPieces)" />
     </div>
   </body>
 </html>
