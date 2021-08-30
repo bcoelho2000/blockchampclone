@@ -75,6 +75,7 @@ function GridCell(boardRef, x, y)
           }
         }
 
+        console.log("game.nextPieces.blockTotal:"+game.nextPieces.blockTotal+" vs blocksToBePlaced.length:"+blocksToBePlaced.length);
         if(game.nextPieces.blockTotal == blocksToBePlaced.length)
         {
           console.log("Good! We can successfully place all the blocks!");
@@ -83,7 +84,9 @@ function GridCell(boardRef, x, y)
             blocksToBePlaced[blockToBePlacedIdx].gameBoardGridCell.setBlock(blocksToBePlaced[blockToBePlacedIdx].newGridCell.block);
             blocksToBePlaced[blockToBePlacedIdx].gameBoardGridCell.render();
           }
-          //game.addRandomPiece(game.nextPieces);
+          
+          game.nextPieces.blockTotal = 0;
+          game.addRandomPiece(game.nextPieces);
         }
         else {
           console.log("Some blocks were not placed... Maybe there was an overlap»");
