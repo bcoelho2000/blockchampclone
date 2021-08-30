@@ -47,12 +47,9 @@ function Game()
           boardY < pieceMatrix[boardX].length &&
           pieceMatrix[boardX][boardY]!=0)
         {
-          block = new Block(pieceColor, pieceMatrix[boardX][boardY]);
+          block = new Block(pieceColor, pieceMatrix[boardX][boardY], true);
         }
-        /*
-        The idea here is to add a new Block EVEN IF it's null because
-        we want to
-        */
+        
         board.addNewBlockAndRender(block, boardX, boardY, true);
       }
     }
@@ -62,7 +59,7 @@ function Game()
   this.board.createGrid();
   this.board.render();
 
-  this.nextPieces = new Board("nextPiecesID", "nextpieces-container", 5, 5)
+  this.nextPieces = new Board("nextPiecesID", "nextpieces-container", 5, 5, true)
   this.nextPieces.createGrid();
   this.nextPieces.render();
   this.addRandomPiece(this.nextPieces);

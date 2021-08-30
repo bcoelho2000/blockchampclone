@@ -1,10 +1,11 @@
-function Block(color, points)
+function Block(color, points, draggable)
 {
   console.log("Block.ctor() start");
   this.gridCell = null;
   this.color = color;
   this.points = points;
   this.view = null;
+  this.draggable = draggable;
 
   this.setGridCell = function(gridCellRef)
   {
@@ -14,6 +15,30 @@ function Block(color, points)
       this.gridCell = gridCellRef;
       return overrideCell;
   };
+
+  this.setDraggable = function(draggable)
+  {
+    this.draggable = draggable;
+  }
+
+  /*this.eventDragStart = function dragStart(e) {
+    console.log("Block.dragStart targetID: "+e.target.id);
+    e.dataTransfer.setData('text/plain', e.target.id);
+
+
+      setTimeout(() => {
+          e.target.classList.add('hide');
+      }, 0);
+
+  }*/
+
+  this.eventBlockMouseDown = function blockMouseDown(mouseEvent)
+  {
+    console.log("eventBlockMouseDown: "+mouseEvent.target.id);
+    let blockX = this.parentElement.getAttribute("grid-cell-x");
+    let blockY = this.parentElement.getAttribute("grid-cell-y");
+    game.nextPieces.blockDragged = { x: blockX, y: blockY};
+  }
 
   this.render = function(htmlContainer=null)
   {
@@ -39,6 +64,13 @@ function Block(color, points)
     this.view.className = "block";
     this.view.style.backgroundColor = color;
     this.view.id = "block-id"+this.gridCell.x+this.gridCell.y;
+
+    if(this.draggable)
+    {
+      //this.view.addEventListener('dragstart', this.eventDragStart);
+      //this.view.draggable="true";
+      this.view.addEventListener('mousedown', this.eventBlockMouseDown)
+    }
 
     htmlContainer.className = "grid-cell grid-cell-full";
     if(htmlContainer.hasChildNodes())

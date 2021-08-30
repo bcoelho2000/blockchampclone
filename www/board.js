@@ -1,4 +1,4 @@
-function Board(viewID, className, width, height)
+function Board(viewID, className, width, height, draggable=false)
 {
   console.log("Board ctor start");
   this.view = document.getElementById(viewID);
@@ -6,6 +6,29 @@ function Board(viewID, className, width, height)
   this.width = width;
   this.height = height;
   this.grid = null;
+  this.draggable = draggable;
+  this.blockDragged = null;
+  this.blockTotal = 0;
+
+  this.eventDragStart = function dragStart(e) {
+    console.log("Block.dragStart targetID: "+e.target.id);
+    e.dataTransfer.setData('text/plain', e.target.id);
+
+      /*
+      setTimeout(() => {
+          e.target.classList.add('hide');
+      }, 0);
+      */
+  };
+
+  if(this.draggable)
+  {
+    console.log("Board is draggable: "+viewID)
+    this.view.addEventListener('dragstart', this.eventDragStart);
+    this.view.draggable="true";
+  }
+
+
 
   this.createGrid = function()
   {
