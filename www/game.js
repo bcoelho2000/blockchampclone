@@ -112,7 +112,8 @@ function Game()
   this.soundGameBegin = new Sound("sounds/mixkit-melodical-flute-music-notification-2310.wav");
   this.soundBlockPlaced =
     [new Sound("sounds/mixkit-bike-magical-bell-591.wav", 0.3),
-    new Sound("sounds/mixkit-drum-and-percussion-545.wav", 0.3)];
+    new Sound("sounds/mixkit-drum-and-percussion-545.wav", 0.3),
+    new Sound("sounds/mixkit-metal-grill-quick-hit-2177.wav", 0.3) ];
   this.playSoundBlockPlaced = function()
   {
     this.soundBlockPlaced[getRandomNumber(0,this.soundBlockPlaced.length)].play();
