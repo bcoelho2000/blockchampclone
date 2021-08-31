@@ -78,7 +78,7 @@ function GridCell(boardRef, x, y)
         if(game.nextPieces.blockTotal == blocksToBePlaced.length)
         {
           console.log("Good! We can successfully place all the blocks!");
-          game.soundBlockPlaced.play();
+          game.playSoundBlockPlaced();
 
           let gameBoardRowsToCheckFull = new Map();
           let gameBoardColumnsToCheckFull = new Map();
