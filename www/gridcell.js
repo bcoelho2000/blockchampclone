@@ -78,6 +78,7 @@ function GridCell(boardRef, x, y)
         if(game.nextPieces.blockTotal == blocksToBePlaced.length)
         {
           console.log("Good! We can successfully place all the blocks!");
+          game.soundBlockPlaced.play();
 
           let gameBoardRowsToCheckFull = new Map();
           let gameBoardColumnsToCheckFull = new Map();
@@ -210,7 +211,6 @@ function GridCell(boardRef, x, y)
   this.removeBlock = function(gridCell)
   {
     console.log("removeBlock");
-    game.blockPopSound.play();
     gridCell.setBlock(null);
     gridCell.render();
   };

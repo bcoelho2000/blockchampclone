@@ -69,16 +69,32 @@ function Game()
     }
   };
 
-  this.board = new Board("boardID", "grid-container", 10, 10);
-  this.board.createGrid();
-  this.board.render();
 
-  this.nextPieces = new Board("nextPiecesID", "nextpieces-container", 5, 5, true)
-  this.nextPieces.createGrid();
-  this.nextPieces.render();
-  this.addRandomPiece(this.nextPieces);
 
-  this.blockPopSound = new Sound("sounds/mixkit-retro-game-notification-212.wav");
+  this.soundRowColumnFull = [new Sound("sounds/mixkit-flute-music-notification-2311.wav"),
+  new Sound("sounds/mixkit-uplifting-flute-2314.wav"),
+  new Sound("sounds/mixkit-uplifting-flute-notification-2317.wav"),
+  new Sound("sounds/mixkit-flute-mobile-phone-notification-alert-2316.wav")];
 
+  this.playSoundRowColumnFull = function()
+  {
+    let sound = this.soundRowColumnFull[getRandomNumber(0,this.soundRowColumnFull.length)];
+    sound.play();
+  };
+  this.soundGameBegin = new Sound("sounds/mixkit-melodical-flute-music-notification-2310.wav");
+  this.soundBlockPlaced = new Sound("sounds/mixkit-bike-magical-bell-591.wav");
+
+  this.beginGame = function()
+  {
+    this.board = new Board("boardID", "grid-container", 10, 10);
+    this.board.createGrid();
+    this.board.render();
+    
+    this.soundGameBegin.play();
+    this.nextPieces = new Board("nextPiecesID", "nextpieces-container", 5, 5, true)
+    this.nextPieces.createGrid();
+    this.nextPieces.render();
+    this.addRandomPiece(this.nextPieces);
+  }
 
 }

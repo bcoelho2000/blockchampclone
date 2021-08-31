@@ -25,7 +25,7 @@ function Board(viewID, className, width, height, draggable=false)
   this.clearRow = function(rowIdx)
   {
     console.log("clearing row: "+rowIdx);
-
+    game.playSoundRowColumnFull();
     for(let i=0;i<this.grid[rowIdx].length;++i)
     {
         console.log("clearing x:"+rowIdx+" y:"+i);
@@ -36,7 +36,7 @@ function Board(viewID, className, width, height, draggable=false)
   this.clearColumn = function(colIdx)
   {
     console.log("clearColumn: "+colIdx);
-
+    game.playSoundRowColumnFull();
     for(let i=0;i<this.grid.length;++i)
     {
         console.log("clearing x:"+i+" y:"+colIdx);
@@ -44,15 +44,16 @@ function Board(viewID, className, width, height, draggable=false)
     }
   }
 
-
-
   this.createGrid = function()
   {
     console.log("Board.createGrid start");
     if(this.view!=null && this.view.hasChildNodes())
     {
-        for(let childIdx = 0; childIdx < this.view.childNodes.length; ++childIdx)
-          this.view.removeChild(this.view.childNodes[childIdx]);
+        let totalChildNodes = this.view.childNodes.length;
+        while(this.view.childNodes.length>0)
+        {
+            this.view.removeChild(this.view.lastChild);
+        }
     }
 
     this.grid = new Array(width);
