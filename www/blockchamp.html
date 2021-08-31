@@ -88,7 +88,10 @@
     </script>
   </head>
   <body onload="init()">
-    <h1>Welcome to my Block Champ Clone</h1>
+    <h1>Welcome to my version of Block Champ</h1>
+    <div id="scoreContainer">
+      Points: <span id="score"></span>
+    </div>
     <div class="gameContainer">
       <div id="boardID">
       </div>
@@ -96,8 +99,9 @@
       </div>
     </div>
     <div id="controls">
-      <input type="button" name="Begin game" value="Begin game" onclick="game.beginGame();" style="padding: 10px;
+      <input type="button" name="Begin new game" value="Begin new game" onclick="game.beginGame();" style="padding: 10px;
     margin: 10px;" />
     </div>
+
   </body>
 </html>

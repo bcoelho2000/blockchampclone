@@ -1,6 +1,21 @@
 
 function Game()
 {
+  this.score = 0;
+  this.scoreView = document.getElementById("score");
+
+  this.updateScore = function(score)
+  {
+    this.score = score;
+    this.scoreView.innerText = this.score;
+  }
+
+  this.addScore = function(score)
+  {
+    this.score += score;
+    this.scoreView.innerText = this.score;
+  }
+
   this.pieceColors = ["#93CB4C", "#F170A0", "#2290FF", "#FCBE5B", "#A35ECD"];
   this.piecesMatrix = new Array();
   this.generatePieces = function()
@@ -89,12 +104,14 @@ function Game()
     this.board = new Board("boardID", "grid-container", 10, 10);
     this.board.createGrid();
     this.board.render();
-    
+
     this.soundGameBegin.play();
     this.nextPieces = new Board("nextPiecesID", "nextpieces-container", 5, 5, true)
     this.nextPieces.createGrid();
     this.nextPieces.render();
     this.addRandomPiece(this.nextPieces);
+
+    this.updateScore(0);
   }
 
 }

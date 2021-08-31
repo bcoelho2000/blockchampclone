@@ -96,18 +96,21 @@ function GridCell(boardRef, x, y)
           for (let rowToCheckFullIdx of gameBoardRowsToCheckFull.keys()) {
             console.log("check row full at: "+rowToCheckFullIdx);
             let rowBlocks = 0;
+            let rowPoints = 0;
             for(let colIdx = 0; colIdx < game.board.grid[rowToCheckFullIdx].length; ++colIdx)
             {
               if(game.board.grid[rowToCheckFullIdx][colIdx].hasBlock())
               {
                 console.log("Block found at: "+rowToCheckFullIdx+"|"+colIdx);
+                rowPoints += game.board.grid[rowToCheckFullIdx][colIdx].block.points;
                 ++rowBlocks;
               }
             }
             console.log("Total row blocks: "+rowBlocks+" vs "+game.board.grid[rowToCheckFullIdx].length);
             if(rowBlocks == game.board.grid[rowToCheckFullIdx].length)
             {
-              console.log("Full row: "+rowToCheckFullIdx);
+              console.log("Full row: "+rowToCheckFullIdx+" points:"+rowPoints);
+              game.addScore(rowPoints);
               // clear row
               game.board.clearRow(rowToCheckFullIdx);
             }
@@ -117,18 +120,21 @@ function GridCell(boardRef, x, y)
           for (let columnToCheckFullIdx of gameBoardColumnsToCheckFull.keys()) {
             console.log("check column full at: "+columnToCheckFullIdx);
             let columnBlocks = 0;
+            let columnPoints = 0;
             for(let rowIdx = 0; rowIdx < game.board.grid.length; ++rowIdx)
             {
               if(game.board.grid[rowIdx][columnToCheckFullIdx].hasBlock())
               {
                 console.log("Block found at: "+rowIdx+"|"+columnToCheckFullIdx);
+                columnPoints += game.board.grid[rowIdx][columnToCheckFullIdx].block.points;
                 ++columnBlocks;
               }
             }
             console.log("Total column blocks: "+columnBlocks+" vs "+game.board.grid[0].length);
             if(columnBlocks == game.board.grid[0].length)
             {
-              console.log("Full column: "+columnToCheckFullIdx);
+              console.log("Full column: "+columnToCheckFullIdx+" points:"+columnPoints);
+              game.addScore(columnPoints);
               // clear columns
               game.board.clearColumn(columnToCheckFullIdx);
             }
