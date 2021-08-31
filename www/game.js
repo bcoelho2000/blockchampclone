@@ -41,11 +41,8 @@ function Game()
   };
   this.generatePieces();
 
-  this.playSound = function()
-  {
-    //mixkit-retro-game-notification-212.wav
-  }
-  
+
+
   /*
   Add a random piece to the 'board' starting on position 'x' and 'y'
   */
@@ -80,5 +77,8 @@ function Game()
   this.nextPieces.createGrid();
   this.nextPieces.render();
   this.addRandomPiece(this.nextPieces);
+
+  this.blockPopSound = new Sound("sounds/mixkit-retro-game-notification-212.wav");
+
 
 }

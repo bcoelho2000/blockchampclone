@@ -9,17 +9,10 @@ function Board(viewID, className, width, height, draggable=false)
   this.draggable = draggable;
   this.blockDragged = null;
   this.blockTotal = 0;
-  //this.blocksFilled = { rows:[], columns:[]};
 
   this.eventDragStart = function dragStart(e) {
     console.log("Block.dragStart targetID: "+e.target.id);
     e.dataTransfer.setData('text/plain', e.target.id);
-
-      /*
-      setTimeout(() => {
-          e.target.classList.add('hide');
-      }, 0);
-      */
   };
 
   if(this.draggable)
@@ -32,19 +25,22 @@ function Board(viewID, className, width, height, draggable=false)
   this.clearRow = function(rowIdx)
   {
     console.log("clearing row: "+rowIdx);
+
     for(let i=0;i<this.grid[rowIdx].length;++i)
     {
         console.log("clearing x:"+rowIdx+" y:"+i);
-        setTimeout(this.grid[rowIdx][i].removeBlock, 600+i*100, this.grid[rowIdx][i]);
+        setTimeout(this.grid[rowIdx][i].removeBlock, 500+i*100, this.grid[rowIdx][i]);
     }
   };
 
   this.clearColumn = function(colIdx)
   {
+    console.log("clearColumn: "+colIdx);
+
     for(let i=0;i<this.grid.length;++i)
     {
         console.log("clearing x:"+i+" y:"+colIdx);
-        setTimeout(this.grid[i][colIdx].removeBlock, 600+i*100, this.grid[i][colIdx]);
+        setTimeout(this.grid[i][colIdx].removeBlock, 500+i*100 , this.grid[i][colIdx]);
     }
   }
 

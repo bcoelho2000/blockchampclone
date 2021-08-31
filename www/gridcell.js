@@ -209,6 +209,8 @@ function GridCell(boardRef, x, y)
 
   this.removeBlock = function(gridCell)
   {
+    console.log("removeBlock");
+    game.blockPopSound.play();
     gridCell.setBlock(null);
     gridCell.render();
   };
