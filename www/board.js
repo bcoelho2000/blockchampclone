@@ -9,6 +9,7 @@ function Board(viewID, className, width, height, draggable=false)
   this.draggable = draggable;
   this.blockDragged = null;
   this.blockTotal = 0;
+  //this.blocksFilled = { rows:[], columns:[]};
 
   this.eventDragStart = function dragStart(e) {
     console.log("Block.dragStart targetID: "+e.target.id);
@@ -26,6 +27,25 @@ function Board(viewID, className, width, height, draggable=false)
     console.log("Board is draggable: "+viewID)
     this.view.addEventListener('dragstart', this.eventDragStart);
     this.view.draggable="true";
+  }
+
+  this.clearRow = function(rowIdx)
+  {
+    console.log("clearing row: "+rowIdx);
+    for(let i=0;i<this.grid[rowIdx].length;++i)
+    {
+        console.log("clearing x:"+rowIdx+" y:"+i);
+        setTimeout(this.grid[rowIdx][i].removeBlock, 600+i*100, this.grid[rowIdx][i]);
+    }
+  };
+
+  this.clearColumn = function(colIdx)
+  {
+    for(let i=0;i<this.grid.length;++i)
+    {
+        console.log("clearing x:"+i+" y:"+colIdx);
+        setTimeout(this.grid[i][colIdx].removeBlock, 600+i*100, this.grid[i][colIdx]);
+    }
   }
 
 
@@ -82,7 +102,7 @@ function Board(viewID, className, width, height, draggable=false)
     If there was an existing block, it doesn't replace it. Returns false.
     */
 
-    console.log("Board.addNewBlock: "+block+" "+x+" "+y+" override:"+override);
+    //console.log("Board.addNewBlock: "+block+" "+x+" "+y+" override:"+override);
 
     if(!(this.grid!=null && this.grid[x][y]!=null))
     {
@@ -94,22 +114,14 @@ function Board(viewID, className, width, height, draggable=false)
 
     if(block!=null || override)
     {
-      this.grid[x][y].setBlock(block)
+      this.grid[x][y].setBlock(block);
       this.grid[x][y].render();
-      console.log("Board.addNewBlock true");
+      //console.log("Board.addNewBlock true");
       return true;
     }
-    console.log("Board.addNewBlock false");
+    //console.log("Board.addNewBlock false");
     return false;
   };
-
-  /*this.setBlock = function (block, x, y)
-  {
-    if(block != null && this.grid != null)
-    {
-        this.grid[x][y].setBlock(block);
-    }
-  }*/
 
   console.log("Board ctor end");
 }

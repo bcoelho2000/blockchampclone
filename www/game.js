@@ -26,9 +26,26 @@ function Game()
     this.piecesMatrix.push([  [2, 2],
                               [2, 0]
                             ]);
+
+    this.piecesMatrix.push([  [2]
+                            ]);
+
+    this.piecesMatrix.push([  [2],
+                              [2]
+                              ]);
+
+    this.piecesMatrix.push([  [3],
+                              [3],
+                              [3]
+                              ]);
   };
   this.generatePieces();
 
+  this.playSound = function()
+  {
+    //mixkit-retro-game-notification-212.wav
+  }
+  
   /*
   Add a random piece to the 'board' starting on position 'x' and 'y'
   */
@@ -49,7 +66,7 @@ function Game()
         {
           block = new Block(pieceColor, pieceMatrix[boardX][boardY], true);
         }
-        
+
         board.addNewBlockAndRender(block, boardX, boardY, true);
       }
     }

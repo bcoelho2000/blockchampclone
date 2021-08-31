@@ -65,7 +65,6 @@ function GridCell(boardRef, x, y)
               // if that is the case the we can't add the new piece (of course)
               // and if we added the new blocks we would had to rollback all the new blocks added
               console.log("adding a new block to be placed");
-
               blocksToBePlaced.push({gameBoardGridCell: baseGridCell, newGridCell: newGridCell});
             }
             else {
@@ -79,12 +78,63 @@ function GridCell(boardRef, x, y)
         if(game.nextPieces.blockTotal == blocksToBePlaced.length)
         {
           console.log("Good! We can successfully place all the blocks!");
+
+          let gameBoardRowsToCheckFull = new Map();
+          let gameBoardColumnsToCheckFull = new Map();
+
           for(let blockToBePlacedIdx = 0; blockToBePlacedIdx < blocksToBePlaced.length; ++blockToBePlacedIdx)
           {
+            gameBoardRowsToCheckFull.set(blocksToBePlaced[blockToBePlacedIdx].gameBoardGridCell.x,1);
+            gameBoardColumnsToCheckFull.set(blocksToBePlaced[blockToBePlacedIdx].gameBoardGridCell.y,1);
+
             blocksToBePlaced[blockToBePlacedIdx].gameBoardGridCell.setBlock(blocksToBePlaced[blockToBePlacedIdx].newGridCell.block);
             blocksToBePlaced[blockToBePlacedIdx].gameBoardGridCell.render();
           }
-          
+
+          //Check for row full
+          for (let rowToCheckFullIdx of gameBoardRowsToCheckFull.keys()) {
+            console.log("check row full at: "+rowToCheckFullIdx);
+            let rowBlocks = 0;
+            for(let colIdx = 0; colIdx < game.board.grid[rowToCheckFullIdx].length; ++colIdx)
+            {
+              if(game.board.grid[rowToCheckFullIdx][colIdx].hasBlock())
+              {
+                console.log("Block found at: "+rowToCheckFullIdx+"|"+colIdx);
+                ++rowBlocks;
+              }
+            }
+            console.log("Total row blocks: "+rowBlocks+" vs "+game.board.grid[rowToCheckFullIdx].length);
+            if(rowBlocks == game.board.grid[rowToCheckFullIdx].length)
+            {
+              console.log("Full row: "+rowToCheckFullIdx);
+              // clear row
+              game.board.clearRow(rowToCheckFullIdx);
+            }
+          }
+
+          //Check for column full
+          for (let columnToCheckFullIdx of gameBoardColumnsToCheckFull.keys()) {
+            console.log("check column full at: "+columnToCheckFullIdx);
+            let columnBlocks = 0;
+            for(let rowIdx = 0; rowIdx < game.board.grid.length; ++rowIdx)
+            {
+              if(game.board.grid[rowIdx][columnToCheckFullIdx].hasBlock())
+              {
+                console.log("Block found at: "+rowIdx+"|"+columnToCheckFullIdx);
+                ++columnBlocks;
+              }
+            }
+            console.log("Total column blocks: "+columnBlocks+" vs "+game.board.grid[0].length);
+            if(columnBlocks == game.board.grid[0].length)
+            {
+              console.log("Full column: "+columnToCheckFullIdx);
+              // clear columns
+              game.board.clearColumn(columnToCheckFullIdx);
+            }
+          }
+
+
+          // Generate next piece
           game.nextPieces.blockTotal = 0;
           game.addRandomPiece(game.nextPieces);
         }
@@ -155,14 +205,20 @@ function GridCell(boardRef, x, y)
   this.hasBlock = function()
   {
     return this.block!=null;
-  }
+  };
+
+  this.removeBlock = function(gridCell)
+  {
+    gridCell.setBlock(null);
+    gridCell.render();
+  };
 
   this.render = function()
   {
-    console.log("GridCell.render start");
+    //console.log("GridCell.render start");
     if(this.block != null)
     {
-      console.log("GridCell.render invoke block.render()");
+      //console.log("GridCell.render invoke block.render()");
       this.block.render();
     }
     else
@@ -176,6 +232,6 @@ function GridCell(boardRef, x, y)
           this.view.removeChild(this.view.childNodes[childIdx]);
       }
     }
-    console.log("GridCell.render end");
+    //console.log("GridCell.render end");
   };
 }
