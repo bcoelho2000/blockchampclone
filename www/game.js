@@ -128,8 +128,10 @@ function Game()
     this.board.render();
 
     this.soundGameBegin.play();
+
     //this.soundAmbient.audio.loop = true;
-    //this.soundAmbient.play();
+
+
     this.nextPieces = new Board("nextPiecesID", "nextpieces-container", 5, 5, true)
     this.nextPieces.createGrid();
     this.nextPieces.render();

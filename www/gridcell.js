@@ -11,6 +11,7 @@ function GridCell(boardRef, x, y)
   this.drop = function drop(e) {
     console.log("GridCell.drop "+e.dataTransfer.getData('text/plain'));
     //console.log("game.nextPieces.blockDragged: "+game.nextPieces.blockDragged);
+    game.soundAmbient.play();
 
     let baseBlockX = this.getAttribute("grid-cell-x");
     let baseBlockY = this.getAttribute("grid-cell-y");
