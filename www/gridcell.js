@@ -143,7 +143,7 @@ function GridCell(boardRef, x, y)
 
 
           // Generate next piece
-          game.nextPieces.blockTotal = 0;
+          //game.nextPieces.blockTotal = 0;// passei para dentro do game.addRandomPiece
           game.addRandomPiece(game.nextPieces);
         }
         else {

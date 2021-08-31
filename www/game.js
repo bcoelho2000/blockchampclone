@@ -77,6 +77,8 @@ function Game()
   */
   this.addRandomPiece = function(board, x, y)
   {
+    board.blockTotal = 0;
+
     let pieceColor = this.pieceColors[getRandomNumber(0,this.pieceColors.length)];
     let pieceMatrix = this.piecesMatrix[getRandomNumber(0,this.piecesMatrix.length)];
 
@@ -96,6 +98,18 @@ function Game()
         board.addNewBlockAndRender(block, boardX, boardY, true);
       }
     }
+  };
+
+  this.payForNewPiece = function(payPoints)
+  {
+    if(payPoints>this.score)
+    {
+      alert("Not enough points :(");
+      return;
+    }
+
+    this.addScore(payPoints*-1);
+    this.addRandomPiece(this.nextPieces);
   };
 
 
