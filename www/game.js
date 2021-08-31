@@ -33,6 +33,10 @@ function Game()
                               [5, 5, 5]
                             ]);
 
+        this.piecesMatrix.push([  [5, 5],
+                                  [5, 5]
+                                ]);
+
     this.piecesMatrix.push([  [3, 0, 0],
                               [3, 0, 0],
                               [3, 3, 3]
@@ -53,6 +57,16 @@ function Game()
                               [3],
                               [3]
                               ]);
+
+                              this.piecesMatrix.push([  [3],
+                                                        [3],
+                                                        [3],
+                                                        [3]
+                                                        ]);
+
+      this.piecesMatrix.push([ [3,3,3,3] ]);
+      this.piecesMatrix.push([ [3,3,3] ]);
+      this.piecesMatrix.push([ [3,3] ]);
   };
   this.generatePieces();
 
@@ -97,7 +111,8 @@ function Game()
     sound.play();
   };
   this.soundGameBegin = new Sound("sounds/mixkit-melodical-flute-music-notification-2310.wav");
-  this.soundBlockPlaced = new Sound("sounds/mixkit-drumming-atmospheric-570.wav", 0.5);
+  this.soundBlockPlaced = new Sound("sounds/mixkit-bike-magical-bell-591.wav", 0.2);
+  this.soundAmbient = new Sound("sounds/mixkit-drumming-atmospheric-570.wav", 0.5);
 
   this.beginGame = function()
   {
@@ -106,6 +121,8 @@ function Game()
     this.board.render();
 
     this.soundGameBegin.play();
+    this.soundAmbient.audio.loop = true;
+    this.soundAmbient.play();
     this.nextPieces = new Board("nextPiecesID", "nextpieces-container", 5, 5, true)
     this.nextPieces.createGrid();
     this.nextPieces.render();
