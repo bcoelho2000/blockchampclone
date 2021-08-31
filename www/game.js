@@ -97,7 +97,7 @@ function Game()
     sound.play();
   };
   this.soundGameBegin = new Sound("sounds/mixkit-melodical-flute-music-notification-2310.wav");
-  this.soundBlockPlaced = new Sound("sounds/mixkit-bike-magical-bell-591.wav");
+  this.soundBlockPlaced = new Sound("sounds/mixkit-drumming-atmospheric-570.wav", 0.5);
 
   this.beginGame = function()
   {
